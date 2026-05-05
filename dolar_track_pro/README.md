@@ -1,80 +1,106 @@
 # Dólar Track Pro
 
-Proyecto del Reto 3: Economía - **Dolar-Track**.
+Dólar Track Pro es un sistema End-to-End desarrollado en Python, SQLite y Power BI, enfocado en el análisis de la TRM para apoyar decisiones financieras relacionadas con la compra y venta de divisas.
 
-## Objetivo
+El proyecto corresponde al Reto 3: Economía - Dólar Track, y busca simular una solución tecnológica para un inversionista que necesita registrar, analizar y visualizar el comportamiento diario de la tasa representativa del mercado.
 
-Sistema modular End-to-End para registrar tasas diarias de moneda, calcular promedio, volatilidad y generar alertas de decisión:
+## Descripción del sistema
 
-- **Compra:** cuando la TRM/tasa está por debajo del promedio.
-- **Venta:** cuando la TRM/tasa está por encima del promedio.
-- **Mantener:** cuando la TRM/tasa es igual al promedio.
+El sistema permite registrar usuarios, monedas y valores diarios de la TRM mediante una arquitectura modular basada en programación orientada a objetos. A partir de los registros ingresados, se calculan indicadores como el promedio de la TRM, la volatilidad y las alertas de decisión.
+
+Las alertas se generan comparando el valor de la TRM con el promedio registrado:
+
+- Compra: cuando la TRM está por debajo del promedio.
+- Venta: cuando la TRM está por encima del promedio.
+- Mantener: cuando la TRM es igual al promedio.
+
+De esta manera, el sistema puede apoyar el análisis de tendencias y facilitar una interpretación básica del comportamiento del dólar.
 
 ## Arquitectura del proyecto
 
-```text
-dolar_track_pro/
-├── datos.py                 # Datos iniciales
-├── conexion.py              # Creación dinámica de BD SQLite
-├── usuarios.py              # Clase Usuario - CRUD
-├── monedas.py               # Clase Moneda - CRUD
-├── registros_trm.py         # Clase RegistroTRM - CRUD
-├── analisis.py              # Clase AnalisisSemanal - métricas y alertas
-├── main.py                  # Orquestador con menú interactivo
-├── script_powerbi.py        # Script para conectar Power BI con SQLite
-├── dolar_track.db           # Base de datos generada
-├── informe_powerbi_dolar_track_grupo_7.pbix
-└── requirements.txt
-```
+El proyecto está organizado en módulos independientes para separar responsabilidades y facilitar el mantenimiento del código.
 
-## Cómo ejecutar
+- `datos.py`: contiene los datos iniciales del sistema.
+- `conexion.py`: crea y administra la base de datos SQLite.
+- `usuarios.py`: gestiona la información de los usuarios.
+- `monedas.py`: administra las monedas registradas.
+- `registros_trm.py`: permite registrar y consultar valores diarios de TRM.
+- `analisis.py`: calcula métricas como promedio, volatilidad y alertas.
+- `main.py`: funciona como archivo orquestador del sistema.
+- `script_powerbi.py`: conecta la base de datos con Power BI.
+- `dolar_track.db`: base de datos generada por el sistema.
+- `informe_powerbi_dolar_track_grupo_7.pbix`: dashboard analítico del proyecto.
 
-1. Abre la carpeta en Visual Studio Code.
-2. Abre una terminal dentro de la carpeta.
-3. Ejecuta:
+## Base de datos
 
-```bash
-python main.py
-```
+La base de datos está construida en SQLite y contiene las siguientes tablas principales:
 
-El sistema crea automáticamente `dolar_track.db` si no existe.
+### usuarios
 
-## Validaciones incluidas
+Almacena la información de los usuarios que interactúan con el sistema.
 
-- Fechas en formato `AAAA-MM-DD`.
-- Valores de TRM/tasa mayores que cero.
-- Correos con `@`.
-- Control de errores con `try-except`.
-- Llaves foráneas activadas en SQLite.
-- Restricción para no duplicar la misma fecha con la misma moneda.
+Campos principales:
 
-## Conexión a Power BI
+- `id_usuario`
+- `nombre`
+- `email`
+- `rol`
 
-1. Abre Power BI Desktop.
-2. Entra a **Obtener datos > Script de Python**.
-3. Pega el contenido de `script_powerbi.py`.
-4. Cambia la variable `db_path` por la ruta real del archivo `dolar_track.db`.
-5. Carga las tablas:
-   - `usuarios`
-   - `monedas`
-   - `registros_trm`
-   - `analisis_semanal`
-   - `registros_detalle` opcional
+### monedas
 
-## Visuales sugeridos
+Contiene la información de las monedas registradas para el análisis.
 
-1. Tarjeta: promedio de TRM/tasa.
-2. Tarjeta: volatilidad.
-3. Tarjeta: cantidad de registros.
-4. Línea: evolución de la TRM/tasa por fecha.
-5. Barras: cantidad de registros por usuario.
-6. Segmentador: moneda o usuario.
+Campos principales:
 
-## Entrega en GitHub
+- `id_moneda`
+- `nombre`
+- `simbolo`
+- `descripcion`
 
-Subir todos estos archivos:
+### registros_trm
 
-- Archivos `.py`
-- `dolar_track.db`
-- Archivo `.pbix`
-- `README.md`
+Registra los valores diarios de la TRM asociados a una moneda y a un usuario.
+
+Campos principales:
+
+- `id_registro`
+- `fecha`
+- `valor`
+- `id_moneda`
+- `id_usuario`
+
+### analisis_semanal
+
+Guarda los resultados del análisis realizado sobre los registros de TRM.
+
+Campos principales:
+
+- `id_analisis`
+- `fecha_inicio`
+- `fecha_fin`
+- `fecha_calculo`
+- `promedio`
+- `volatilidad`
+- `dias_compra`
+- `dias_venta`
+- `id_usuario`
+
+## Dashboard en Power BI
+
+El proyecto incluye un dashboard en Power BI conectado a la base de datos `dolar_track.db`. Este tablero permite visualizar de forma clara los principales indicadores del sistema.
+
+El dashboard presenta:
+
+- Promedio de la TRM.
+- Volatilidad de la TRM.
+- Cantidad total de registros.
+- Evolución de la TRM por fecha.
+- Cantidad de registros por usuario.
+- Tabla de detalle con fecha, moneda, usuario y valor de la TRM.
+- Filtros para facilitar el análisis de la información.
+
+## Utilidad del proyecto
+
+Dólar Track Pro puede ser útil para personas interesadas en hacer seguimiento al comportamiento del dólar y analizar sus variaciones en el tiempo. Aunque el sistema es una simulación académica, representa una solución aplicable a escenarios financieros básicos, donde se requiere registrar datos, calcular indicadores y visualizar información para apoyar la toma de decisiones.
+
+El proyecto integra backend, base de datos y analítica visual, cumpliendo con una arquitectura End-to-End orientada al análisis financiero.
